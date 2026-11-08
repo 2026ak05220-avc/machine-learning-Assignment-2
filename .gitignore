@@ -6,3 +6,7 @@ venv/
 task.txt
 .DS_Store
 *.log
+submission.html
+screenshot.png
+screenshot.jpg
+build_submission.py
