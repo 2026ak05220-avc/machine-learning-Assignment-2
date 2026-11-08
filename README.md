@@ -171,7 +171,7 @@ the *Classification report* panel:
 | ML Model Name | Observation about model performance |
 |---|---|
 | **Logistic Regression** | Accuracy 0.9228, about one point below the RBF SVM, which is high for a linear model. This suggests the 16 shape features already carry enough discriminatory information for a linear decision rule to work well on this data. It records the best AUC of the five (0.9946), so its ranking of class probabilities is the most reliable even though its final `argmax` predictions are not the most accurate. A high AUC alongside lower accuracy points to the decision thresholds rather than the learned ordering being the limiting factor, though I did not run a threshold-tuning experiment to confirm this. Its weakest class is `SIRA` (F1 0.862), the one that overlaps most with `DERMASON`. Training takes 0.21 s. |
-| **Decision Tree** | Second weakest overall — ahead of Naive Bayes on every metric except AUC (accuracy 0.9062 vs 0.8944, MCC 0.8867 vs 0.8726) — but it has clearly the lowest AUC of the five (0.9733 against roughly 0.99 for the others), even with depth capped at 14 and a minimum of 6 samples per leaf to control overfitting. The weak AUC is expected: a tree derives probabilities from leaf frequencies, so many test rows share the same few probability values and the ROC curve has little to separate. Its worst class is `SIRA` (F1 0.850), the lowest `SIRA` score of any of the five models, followed by `BARBUNYA` (0.899) and `DERMASON` (0.900). That fits the structure of the problem: the `SIRA`/`DERMASON` boundary is not aligned to any single feature, so axis-aligned splits approximate it poorly. Its advantage is interpretability — the fitted tree can be printed as readable if/else rules on the shape factors, which none of the other four models offer. |
+| **Decision Tree** | Second weakest overall — ahead of Naive Bayes on every metric except AUC (accuracy 0.9062 vs 0.8944, MCC 0.8867 vs 0.8726) — but it has clearly the lowest AUC of the five (0.9733 against roughly 0.99 for the others), even with depth capped at 14 and a minimum of 6 samples per leaf to control overfitting. The weak AUC is expected: a tree derives probabilities from leaf frequencies, so many test rows share the same few probability values and the ROC curve has little to separate. Its worst class is `SIRA` (F1 0.850), the second-lowest `SIRA` score after Naive Bayes (0.845), followed by `BARBUNYA` (0.899) and `DERMASON` (0.900). That fits the structure of the problem: the `SIRA`/`DERMASON` boundary is not aligned to any single feature, so axis-aligned splits approximate it poorly. Its advantage is interpretability — the fitted tree can be printed as readable if/else rules on the shape factors, which none of the other four models offer. |
 | **KNN** | Second best overall (accuracy 0.9276, F1 0.9390, MCC 0.9125) and the best of the non-kernel models. It handles the hardest class better than the linear and tree models (`SIRA` F1 0.881), which is consistent with local neighbourhoods being able to follow an irregular boundary. One caveat on interpretation: with `weights='distance'` the training score is not meaningful, because every training point is its own nearest neighbour at zero distance, so only the held-out numbers are informative. Training is effectively free (0.01 s) since the model only stores the data, but prediction is costly — `knn.joblib` is 1.5 MB and holds all 10,834 training rows, and each prediction requires distance computations against them. |
 | **Naive Bayes** | Weakest overall (accuracy 0.8944, F1 0.9036, MCC 0.8726). The likely reason is that its conditional independence assumption does not hold on this dataset: `Area`, `Perimeter`, `ConvexArea` and `EquivDiameter` all measure size and are strongly correlated (pairwise Pearson r between 0.967 and 0.9999, measured on the de-duplicated data). Treating correlated features as independent evidence can over-sharpen the posteriors. Its worst class is `BARBUNYA` (F1 0.830, 0.117 below the SVM), which it most often confuses with `CALI`. Two points in its favour: an AUC of 0.9911, higher than both the tree and the SVM, so its ranking of classes is sound even when the final prediction is wrong; and a 0.01 s fit from closed-form statistics with no iterative optimisation. |
 | **Support Vector Machine** | Best on accuracy, precision, recall, F1 and MCC (0.9332 / 0.9451 / 0.9424 / 0.9436 / 0.9192). The RBF kernel allows a non-linear boundary, which is a plausible explanation for it handling the `SIRA`/`DERMASON` overlap better than the others — `SIRA` F1 reaches 0.888, the highest of the five, and it leads or ties on 6 of the 7 varieties. This is an interpretation of the per-class results rather than a decision-boundary analysis. Two caveats. Its AUC (0.9904) is below both Logistic Regression and Naive Bayes, because SVC has no native probability output and the Platt sigmoid fitted over 5 folds only approximates one, so for ranking tasks the logistic model is the better choice. It is also the slowest to train (2.23 s, roughly 10x the others), and kernel SVM training cost grows steeply as the dataset gets larger. |
@@ -208,8 +208,8 @@ visible warning.
 ## Reproducing the results
 
 ```bash
-git clone <your-repo-url>
-cd <your-repo>
+git clone https://github.com/2026ak05220-avc/machine-learning-Assignment-2
+cd machine-learning-Assignment-2
 pip install -r requirements.txt
 
 python train_models.py      # retrains and rewrites model/ + test_data.csv
@@ -226,9 +226,10 @@ mismatch is the most common cause of a working repo failing on Streamlit Cloud.
 
 ## Notes on metric choices
 
-* **Macro averaging** is the headline because the classes are imbalanced 26% to 4%;
-  weighted averaging would let `DERMASON` performance mask `BOMBAY` and `BARBUNYA`.
-  The app exposes both.
+* **Macro averaging** is the headline because the classes are imbalanced 26% to 4%.
+  Weighted averaging lets `DERMASON` (26% of rows) dominate the average while
+  under-weighting `BARBUNYA` (9.8%), which is where the weakest per-class scores
+  occur — Naive Bayes manages only 0.830 F1 there. The app exposes both.
 * **AUC** is one-vs-rest macro over `predict_proba`. If an uploaded CSV happens to
   contain only a subset of the seven varieties, the probability columns for the
   present classes are re-normalised and scored among themselves; with a single class
