@@ -313,7 +313,10 @@ with tab_model:
         delta = None
         if train_meta and model_choice in train_meta["metrics"] and average == "macro":
             ref = train_meta["metrics"][model_choice].get(metric)
-            if ref is not None and not np.isnan(value):
+            # Only worth showing when it would read as a real difference. Scoring
+            # the bundled split reproduces the training-time figure exactly, and
+            # six cards all reading "+0.0000" is noise, not information.
+            if ref is not None and not np.isnan(value) and abs(value - ref) >= 5e-5:
                 delta = f"{value - ref:+.4f} vs hold-out"
         col.metric(metric, "n/a" if np.isnan(value) else f"{value:.4f}", delta,
                    delta_color="off")
