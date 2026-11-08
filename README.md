@@ -176,7 +176,7 @@ Per-class F1 on the hold-out split — this is where the models actually differ:
 
 ## The Streamlit application
 
-> **Live app:** `<PASTE YOUR STREAMLIT CLOUD URL HERE>`
+> **Live app:** <https://dry-bean-classifier-2026ak05220.streamlit.app/>
 
 The app never calls `.fit()`. It loads the five persisted pipelines and the label
 encoder, then only predicts — so the metrics on screen are a true read of saved-model
