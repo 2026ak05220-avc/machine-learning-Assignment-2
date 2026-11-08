@@ -1,0 +1,14 @@
+# Pinned so that Streamlit Community Cloud unpickles the model/*.joblib
+# artefacts with the exact scikit-learn build that produced them.
+streamlit==1.66.1
+scikit-learn==1.9.0
+pandas==3.0.5
+numpy==2.4.6
+scipy==1.17.1
+joblib==1.6.0
+matplotlib==3.11.1
+seaborn==0.13.2
+
+# Only needed by train_models.py --refresh (downloads the dataset from UCI).
+# The app never imports it; data/dry_bean.csv is committed.
+ucimlrepo==0.0.7
