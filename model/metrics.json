@@ -1,0 +1,66 @@
+{
+  "dataset": "UCI Dry Bean Dataset (id=602)",
+  "n_instances": 13543,
+  "n_features": 16,
+  "classes": [
+    "BARBUNYA",
+    "BOMBAY",
+    "CALI",
+    "DERMASON",
+    "HOROZ",
+    "SEKER",
+    "SIRA"
+  ],
+  "train_rows": 10834,
+  "test_rows": 2709,
+  "average": "macro",
+  "random_state": 17,
+  "best_model_by_f1": "Support Vector Machine",
+  "metrics": {
+    "Logistic Regression": {
+      "Accuracy": 0.9228497600590624,
+      "AUC": 0.9946355230529663,
+      "Precision": 0.9359005396894952,
+      "Recall": 0.9348770739890583,
+      "F1": 0.9353362430719214,
+      "MCC": 0.9066890593093732,
+      "fit_seconds": 0.21
+    },
+    "Decision Tree": {
+      "Accuracy": 0.9062384643779993,
+      "AUC": 0.9733451517798419,
+      "Precision": 0.9203863109424225,
+      "Recall": 0.9192624694969618,
+      "F1": 0.9194171759633232,
+      "MCC": 0.8866937858465983,
+      "fit_seconds": 0.21
+    },
+    "KNN": {
+      "Accuracy": 0.9276485788113695,
+      "AUC": 0.990137712421174,
+      "Precision": 0.9406864187410994,
+      "Recall": 0.9375053284135947,
+      "F1": 0.938961446780004,
+      "MCC": 0.912481158745904,
+      "fit_seconds": 0.01
+    },
+    "Naive Bayes": {
+      "Accuracy": 0.8944259874492433,
+      "AUC": 0.9911104818364114,
+      "Precision": 0.9020615722425417,
+      "Recall": 0.9053526320492008,
+      "F1": 0.9035688425518253,
+      "MCC": 0.8725885986044505,
+      "fit_seconds": 0.01
+    },
+    "Support Vector Machine": {
+      "Accuracy": 0.9331856773717239,
+      "AUC": 0.9904007274655144,
+      "Precision": 0.9450594342851856,
+      "Recall": 0.9424161215902449,
+      "F1": 0.9435611453106059,
+      "MCC": 0.9192453310753886,
+      "fit_seconds": 2.23
+    }
+  }
+}
